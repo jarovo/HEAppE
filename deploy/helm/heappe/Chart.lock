@@ -1,6 +1,9 @@
 dependencies:
 - name: mssql
-  repository: file://../../../../helm-mssql/chart
-  version: 0.0.0
-digest: sha256:06b435d528957f234c25812236b61733770147397866eaf365f08b67c3d516f9
-generated: "2026-09-23T09:38:11.582552957+02:00"
+  repository: https://gitlab.com/api/v4/projects/86790799/packages/helm/mssql
+  version: 1.10.4-rc.3
+- name: vault
+  repository: https://helm.releases.hashicorp.com
+  version: 0.34.1
+digest: sha256:048aed92bb1218fe96ca160a60124a56301d69e67a03446d0386950f8707772d
+generated: "2026-10-20T15:09:01.028611143+02:00"

@@ -24,6 +24,48 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
+      hostAliases:
+        - ip: "127.0.0.1"
+          hostnames:
+          - vaultagent
+
+      initContainers:
+        - name: wait-for-mssql
+          image: mcr.microsoft.com/mssql-tools:latest
+          env:
+            - name: SA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-mssql
+                  key: mssql-root-password
+          command:
+            - sh
+            - -c
+            - |
+              until /opt/mssql-tools/bin/sqlcmd -S {{ .Release.Name }}-mssql,1433 -U sa -P "$SA_PASSWORD" -Q "SELECT 1" >/dev/null 2>&1; do
+                echo "waiting for mssql..."; sleep 5
+              done
+        - name: seed
+          image: alpine
+          env:
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "heappe.fullname" . }}-admin
+                  key: password
+            - name: CREATED_AT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "heappe.fullname" . }}-admin
+                  key: createdAt
+          command: [ "/bin/sh", "/opt/scripts/seed-gen.sh"]
+          volumeMounts:
+            - name: config-dir
+              mountPath: /opt/heappe/confs
+            - name: seed-gen
+              mountPath: /opt/scripts
+
       containers:
         # ---- HEAppE REST API container ----
         - name: heappe
@@ -70,14 +112,11 @@ spec:
               mountPath: /opt/heappe/logs
             - name: sftp-temp
               mountPath: /sftp
-            - name: config
+            - name: config-dir
+              mountPath: /opt/heappe/confs
+            - name: api-config
               mountPath: /opt/heappe/confs/appsettings.json
               subPath: appsettings.json
-            {{- if or .Values.api.seedData .Values.api.seedDataObject .Values.api.existingSeedConfigMap }}
-            - name: seed
-              mountPath: /opt/heappe/confs/seed.njson
-              subPath: seed.njson
-            {{- end }}
             - name: db-backups
               mountPath: /opt/heappe/backups/database
             - name: keys
@@ -99,6 +138,21 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.api.resources | nindent 12 }}
+
+        - name: vaultagent
+          command: [ vault, agent, --config, /opt/confs/vault/agent/vault-agent.hcl ]
+          image: "{{ if .Values.global.imageRegistry }}{{ .Values.global.imageRegistry }}/{{ end }}{{ .Values.vaultAgentImage.repository }}:{{ .Values.vaultAgentImage.tag }}"
+          #imagePullPolicy: {{ .Values.vaultAgentImage.pullPolicy }}
+          ports:
+            - name: vaultagent
+              containerPort: 8100
+              protocol: TCP
+          env:
+            - name: SKIP_SETCAP
+              value: "1"
+          volumeMounts:
+            - name: vault-agent-config
+              mountPath: /opt/confs/vault/agent/vault-agent.hcl
 
         {{- if .Values.sshAgent.enabled }}
         # ---- SSH Agent sidecar ----
@@ -126,14 +180,17 @@ spec:
           emptyDir: {}
         - name: sftp-temp
           emptyDir: {}
-        - name: config
+        - name: config-dir
+          emptyDir: {}
+        - name: api-config
           configMap:
             name: {{ include "heappe.fullname" . }}-api-config
-        {{- if or .Values.api.seedData .Values.api.seedDataObject .Values.api.existingSeedConfigMap }}
-        - name: seed
+        - name: vault-agent-config
           configMap:
-            name: {{ .Values.api.existingSeedConfigMap | default (printf "%s-api-seed" (include "heappe.fullname" .)) }}
-        {{- end }}
+            name: {{ include "heappe.fullname" . }}-vault-agent
+        - name: seed-gen
+          configMap:
+            name: {{ include "heappe.fullname" . }}-seed-gen
         - name: db-backups
           emptyDir: {}
         - name: keys

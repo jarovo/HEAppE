@@ -6,6 +6,13 @@ Expand the name of the chart.
 {{- end }}
 
 {{/*
+Create api route url
+*/}}
+{{- define "heappe.url" -}}
+{{- printf "https://%s" .Values.api.route.host }}
+{{- end }}
+
+{{/*
 Create a default fully qualified app name.
 */}}
 {{- define "heappe.fullname" -}}
