@@ -86,10 +86,6 @@ spec:
 
             - name: ASPNETCORE_RUNTYPE_ENVIRONMENT
               value: {{ .Values.api.environmentType | quote }}
-            {{- if .Values.sshAgent.enabled }}
-            - name: SSH_AUTH_SOCK
-              value: "/app/shared/agentsocket"
-            {{- end }}
             - name: TZ
               value: "UTC"
             - name: OTEL_SERVICE_NAME
@@ -104,10 +100,6 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end }}
           volumeMounts:
-            {{- if .Values.sshAgent.enabled }}
-            - name: app-shared
-              mountPath: /app/shared
-            {{- end }}
             - name: logs
               mountPath: /opt/heappe/logs
             - name: sftp-temp
@@ -153,29 +145,7 @@ spec:
           volumeMounts:
             - name: vault-agent-config
               mountPath: /opt/confs/vault/agent/vault-agent.hcl
-
-        {{- if .Values.sshAgent.enabled }}
-        # ---- SSH Agent sidecar ----
-        - name: sshagent
-          image: "{{ if .Values.global.imageRegistry }}{{ .Values.global.imageRegistry }}/{{ end }}{{ .Values.sshAgent.image.repository }}:{{ .Values.sshAgent.image.tag }}"
-          imagePullPolicy: {{ .Values.sshAgent.image.pullPolicy }}
-          env:
-            - name: TZ
-              value: "UTC"
-            - name: SSH_AUTH_SOCK
-              value: "/app/shared/agentsocket"
-          volumeMounts:
-            - name: app-shared
-              mountPath: /app/shared
-          resources:
-            {{- toYaml .Values.sshAgent.resources | nindent 12 }}
-        {{- end }}
-
       volumes:
-        {{- if .Values.sshAgent.enabled }}
-        - name: app-shared
-          emptyDir: {}
-        {{- end }}
         - name: logs
           emptyDir: {}
         - name: sftp-temp
