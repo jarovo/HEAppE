@@ -25,10 +25,10 @@ data:
           "Description": "HEAppE Kubernetes deployment",
           "Version": "v6.5.2",
           "DeployedIPAddress": "0.0.0.0",
-          "Port": "8080",
+          "Port": "{{ .Values.api.containerPort }}",
           "Host": {{ include "heappe.url" . | quote }},
           "HostPostfix": "",
-          "DeploymentEnvironmentType": "Docker",
+          "DeploymentEnvironmentType": "{{ .Values.api.environmentType }}",
           "ResourceAllocationInfrastructureTypes": [
             "HPC"
           ]

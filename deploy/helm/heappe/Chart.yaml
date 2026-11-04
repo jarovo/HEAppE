@@ -3,7 +3,7 @@ name: heappe
 description: HEAppE (High-End Application Execution) Middleware Helm Chart for Kubernetes
 type: application
 version: 0.1.0
-appVersion: "feature-helm-charts"
+appVersion: "6.7.0-dev"
 maintainers:
   - name: IT4Innovations
     email: support.heappe@it4i.cz

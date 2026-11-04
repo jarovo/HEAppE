@@ -83,9 +83,10 @@ spec:
                   key: mssql-root-password
             - name: ConnectionStrings__MiddlewareContext
               value: {{ printf "Server=%s,1433;Database=HEAppEDb;User Id=sa;Password=$(DB_PASSWORD);TrustServerCertificate=True;Encrypt=Yes" (include "heappe.mssql.fullname" .) }}
-
             - name: ASPNETCORE_RUNTYPE_ENVIRONMENT
-              value: {{ .Values.api.environmentType | quote }}
+              value: Docker
+            - name: ASPNETCORE_HTTP_PORTS
+              value: {{ .Values.api.containerPort | quote }}
             - name: TZ
               value: "UTC"
             - name: OTEL_SERVICE_NAME

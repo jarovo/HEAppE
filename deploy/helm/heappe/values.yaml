@@ -32,11 +32,7 @@ api:
     tag: ""  # defaults to Chart.appVersion
     pullPolicy: IfNotPresent
 
-  # -- Container port
   containerPort: 8080
-
-  # -- Environment type passed to ASPNETCORE_RUNTYPE_ENVIRONMENT
-  environmentType: "Docker"
 
   service:
     type: ClusterIP
