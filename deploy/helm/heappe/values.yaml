@@ -85,7 +85,7 @@ api:
   startupProbe:
     httpGet:
       path: /heappe/Health
-      port: http
+      port: api
     initialDelaySeconds: 10
     periodSeconds: 10
     timeoutSeconds: 5
@@ -94,7 +94,7 @@ api:
   livenessProbe:
     httpGet:
       path: /heappe/Health
-      port: http
+      port: api
     initialDelaySeconds: 15
     periodSeconds: 30
     timeoutSeconds: 5
@@ -103,7 +103,7 @@ api:
   readinessProbe:
     httpGet:
       path: /heappe/Health
-      port: http
+      port: api
     initialDelaySeconds: 10
     periodSeconds: 10
     timeoutSeconds: 5
