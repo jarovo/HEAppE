@@ -113,7 +113,7 @@ datastaging:
   replicaCount: 1
 
   image:
-    repository: datastagingapi
+    repository: ghcr.io/it4innovations/datastagingapi
     tag: ""  # defaults to Chart.appVersion
     pullPolicy: IfNotPresent
 
