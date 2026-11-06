@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Unseals vault using the init.json stored in a Kubernetes Secret.
+
 set -x
 set -euo pipefail
 

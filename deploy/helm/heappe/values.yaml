@@ -257,6 +257,13 @@ mssql:
 # =============================================================================
 vault:
   k8sSecretAutoUnseal:
+    #
+    # Experimental feature
+    # Automatically unseal Vault using Kubernetes secrets.
+    # This stores the unseal keys in a Kubernetes secret and uses them to unseal Vault automatically.
+    # Due to the nature of this feature, it is not recommended for production use, as it may compromise
+    # the security of the Vault unseal keys.
+    #
     enabled: true
 
   init:

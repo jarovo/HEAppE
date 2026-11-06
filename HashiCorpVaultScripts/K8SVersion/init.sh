@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Initializes vault and stores the init.json in a Kubernetes Secret.
+
 set -x
 set -euo pipefail
 
