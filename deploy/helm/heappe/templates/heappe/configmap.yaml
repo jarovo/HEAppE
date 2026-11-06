@@ -333,7 +333,7 @@ metadata:
     {{- include "heappe.api.selectorLabels" . | nindent 4 }}
 data:
   seed-gen.sh: |
-    HASHED_PASSWORD=`echo -n "${PASSWORD}${CREATED_AT}" | sha512sum | awk '{print $1}'`
+    HASHED_PASSWORD=`echo -n "${PASSWORD}${CREATED_AT}" | sha512sum | awk '{print toupper($1)}'`
 
     cat > /opt/heappe/confs/seed.njson <<EOF
     {
