@@ -260,7 +260,8 @@ mssql:
 # Hashicorp Vault
 # =============================================================================
 vault:
-  enabled: true
+  k8sSecretAutoUnseal:
+    enabled: true
 
   init:
     image:
