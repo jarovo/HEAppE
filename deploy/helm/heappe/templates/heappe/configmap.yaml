@@ -23,7 +23,7 @@ data:
         "DeploymentSettings": {
           "Name": "HEAppE instance",
           "Description": "HEAppE Kubernetes deployment",
-          "Version": "v6.5.2",
+          "Version": "v6.6.2",
           "DeployedIPAddress": "0.0.0.0",
           "Port": "{{ .Values.api.containerPort }}",
           "Host": {{ include "heappe.url" . | quote }},
@@ -37,7 +37,7 @@ data:
           "Title": "HEAppE Web API",
           "DetailedJobReportingTitle": "Detailed Job Reporting API",
           "DictionaryTitle": "Dictionary API",
-          "Description": "HEAppE middleware API v6.5.0",
+          "Description": "HEAppE middleware API v6.6.2",
           "PrefixDocPath": "swagger",
           "TermOfUsageUrl": "https://heappe.eu",
           "License": "GNU General Public License v3.0",
