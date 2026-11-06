@@ -20,10 +20,6 @@ vaultAgentImage:
 # HEAppE REST API
 # =============================================================================
 api:
-
-  admin:
-    password: foo
-
   # -- Number of replicas
   replicaCount: 1
 
