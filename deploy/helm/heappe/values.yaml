@@ -256,7 +256,7 @@ mssql:
 # Hashicorp Vault
 # =============================================================================
 vault:
-  k8sSecretAutoUnseal:
+  autoUnsealFromK8SSecret:
     #
     # Experimental feature
     # Automatically unseal Vault using Kubernetes secrets.
@@ -265,8 +265,6 @@ vault:
     # the security of the Vault unseal keys.
     #
     enabled: true
-
-  init:
     image:
       repository: "ghcr.io/jarovo/vault-init"
       tag: "latest"

@@ -16,7 +16,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: init
-          image: {{ .Values.vault.init.image.repository }}:{{ .Values.vault.init.image.tag | default .Chart.AppVersion }}
+          image: {{ .Values.vault.autoUnsealFromK8SSecret.image.repository }}:{{ .Values.vault.autoUnsealFromK8SSecret.image.tag | default .Chart.AppVersion }}
           imagePullPolicy: Always
           env:
             - name: NS
@@ -50,7 +50,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: unseal
-          image: {{ .Values.vault.init.image.repository }}:{{ .Values.vault.init.image.tag | default .Chart.AppVersion }}
+          image: {{ .Values.vault.autoUnsealFromK8SSecret.image.repository }}:{{ .Values.vault.autoUnsealFromK8SSecret.image.tag | default .Chart.AppVersion }}
           imagePullPolicy: Always
           env:
             - name: NS
