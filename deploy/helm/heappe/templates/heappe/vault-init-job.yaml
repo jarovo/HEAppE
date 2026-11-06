@@ -1,0 +1,112 @@
+{{ if .Values.vault.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: vault-init
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      serviceAccountName: vault-init
+      restartPolicy: OnFailure
+      containers:
+        - name: init
+          image: {{ .Values.vault.init.image.repository }}:{{ .Values.vault.init.image.tag | default .Chart.AppVersion }}
+          imagePullPolicy: Always
+          env:
+            - name: NS
+              value: {{ .Release.Namespace }}
+            - name: REPLICAS
+              value: {{ .Values.vault.server.ha.replicas | default 1 | quote }}
+            - name: SECRET
+              value: vault-init-keys
+            - name: SHARES
+              value: "5"
+            - name: THRESHOLD
+              value: "3"
+            - name: VAULT_ADDR
+              value: http://{{ .Release.Name }}-vault-internal.{{ .Release.Namespace }}.svc:8200
+          command: [ "/opt/init.sh" ]
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: vault-unseal
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      serviceAccountName: vault-init
+      restartPolicy: OnFailure
+      containers:
+        - name: unseal
+          image: {{ .Values.vault.init.image.repository }}:{{ .Values.vault.init.image.tag | default .Chart.AppVersion }}
+          imagePullPolicy: Always
+          env:
+            - name: NS
+              value: {{ .Release.Namespace }}
+            - name: REPLICAS
+              value: {{ .Values.vault.server.ha.replicas | default 1 | quote }}
+            - name: SECRET
+              value: vault-init-keys
+            - name: SHARES
+              value: "5"
+            - name: THRESHOLD
+              value: "3"
+            - name: VAULT_ADDR
+              value: http://{{ .Release.Name }}-vault-internal.{{ .Release.Namespace }}.svc:8200
+          command: [ "/opt/unseal.sh" ]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vault-init
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: vault-init
+  namespace: {{ .Release.Namespace }}
+rules:
+  # create cannot be restricted by resourceNames, so it gets its own rule
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["create"]
+  # read/update only the one secret that holds the init output
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["vault-init-keys"]
+    verbs: ["get", "update", "patch"]
+  # only needed if the script uses `kubectl exec` or looks up pods
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: vault-init
+  namespace: {{ .Release.Namespace }}
+subjects:
+  - kind: ServiceAccount
+    name: vault-init
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: vault-init
+  apiGroup: rbac.authorization.k8s.io
+{{ end }}

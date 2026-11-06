@@ -260,6 +260,13 @@ mssql:
 # Hashicorp Vault
 # =============================================================================
 vault:
+  enabled: true
+
+  init:
+    image:
+      repository: "ghcr.io/jarovo/vault-init"
+      tag: "latest"
+  
   global:
     openshift: true
 
