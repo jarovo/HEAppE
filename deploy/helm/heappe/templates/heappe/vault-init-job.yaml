@@ -1,4 +1,4 @@
-{{ if .Values.vault.k8sSecretAutoUnseal.enabled }}
+{{ if .Values.vault.autoUnsealFromK8SSecret.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
