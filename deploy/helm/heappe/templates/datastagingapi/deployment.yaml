@@ -22,6 +22,15 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
+      resources:
+        limits:
+          cpu: {{ .Values.datastaging.resources.limits.cpu }}
+          memory: {{ .Values.datastaging.resources.limits.memory }}
+        requests:
+          cpu: {{ .Values.datastaging.resources.requests.cpu }}
+          memory: {{ .Values.datastaging.resources.requests.memory }}
+
       containers:
         - name: datastagingapi
           image: "{{ if .Values.global.imageRegistry }}{{ .Values.global.imageRegistry }}/{{ end }}{{ .Values.datastaging.image.repository }}:{{ .Values.datastaging.image.tag | default .Chart.AppVersion }}"

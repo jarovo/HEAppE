@@ -60,8 +60,10 @@ api:
   resources:
     requests:
       memory: 512Mi
+      cpu: 500m
     limits:
       memory: 2Gi
+      cpu: 500m
 
   nodeSelector: {}
   tolerations: []
@@ -136,8 +138,10 @@ datastaging:
   resources:
     requests:
       memory: 256Mi
+      cpu: 250m
     limits:
       memory: 1Gi
+      cpu: 500m
 
   nodeSelector: {}
   tolerations: []
@@ -258,6 +262,14 @@ mssql:
         add:
         - NET_BIND_SERVICE
 
+    resources:
+      requests:
+        memory: 512Mi
+        cpu: 500m
+      limits:
+        memory: 2Gi
+        cpu: 500m
+
     runInitContainerAsUser: 0
 
 # =============================================================================
@@ -277,6 +289,15 @@ vault:
       repository: "ghcr.io/jarovo/vault-init"
       tag: "latest"
   
+  resources:
+    requests:
+      memory: '256Mi'
+      cpu: '250m'
+    limits:
+      memory: '256Mi'
+      cpu: '250m'
+
+
   global:
     openshift: true
 
