@@ -134,8 +134,7 @@ spec:
 
         - name: vaultagent
           command: [ vault, agent, --config, /opt/confs/vault/agent/vault-agent.hcl ]
-          image: "{{ if .Values.global.imageRegistry }}{{ .Values.global.imageRegistry }}/{{ end }}{{ .Values.vaultAgentImage.repository }}:{{ .Values.vaultAgentImage.tag }}"
-          #imagePullPolicy: {{ .Values.vaultAgentImage.pullPolicy }}
+          image: "{{ if .Values.global.imageRegistry }}{{ .Values.global.imageRegistry }}/{{ end }}{{ .Values.api.vaultAgent.image.repository }}:{{ .Values.api.vaultAgent.image.tag }}"
           ports:
             - name: vaultagent
               containerPort: 8100
@@ -146,6 +145,8 @@ spec:
           volumeMounts:
             - name: vault-agent-config
               mountPath: /opt/confs/vault/agent/vault-agent.hcl
+          resources:
+            {{- toYaml .Values.api.vaultAgent.resources | nindent 12 }}
       volumes:
         - name: logs
           emptyDir: {}

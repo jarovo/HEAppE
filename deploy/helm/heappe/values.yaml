@@ -12,10 +12,6 @@ global:
   # -- Image pull secrets
   imagePullSecrets: []
 
-vaultAgentImage:
-  repository: "registry.connect.redhat.com/hashicorp/vault"
-  tag: "2.0.4-ubi"
-
 # =============================================================================
 # HEAppE REST API
 # =============================================================================
@@ -104,6 +100,18 @@ api:
     periodSeconds: 10
     timeoutSeconds: 5
     failureThreshold: 3
+
+  vaultAgent:
+    image:
+      repository: "registry.connect.redhat.com/hashicorp/vault"
+      tag: "2.0.4-ubi"
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 250m
+      limits:
+        memory: 256Mi
+        cpu: 250m
 
 # =============================================================================
 # DataStaging API
