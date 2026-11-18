@@ -276,7 +276,7 @@ mssql:
 # Hashicorp Vault
 # =============================================================================
 vault:
-  autoUnsealFromK8SSecret:
+  vaultBootstrapper:
     #
     # Experimental feature
     # Automatically unseal Vault using Kubernetes secrets.
@@ -286,9 +286,9 @@ vault:
     #
     enabled: true
     image:
-      repository: "ghcr.io/jarovo/vault-init"
-      tag: "0.1.0"
-  
+      repository: "ghcr.io/jarovo/vault-bootstrapper"
+      tag: "0.1.0-dev"
+
   resources:
     requests:
       memory: '256Mi'
@@ -323,6 +323,11 @@ vault:
 
     readinessProbe:
       path: "/v1/sys/health?uninitcode=204"
+
+    service:
+      annotations:
+        "vault-bootstrapper.it4i.cz/desired-state": "initialized"
+
 
   csi:
     image:
