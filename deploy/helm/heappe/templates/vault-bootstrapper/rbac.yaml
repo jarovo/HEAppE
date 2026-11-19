@@ -28,7 +28,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: vault-bootstrapper
-    namespace: heappe-testing
+    namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
