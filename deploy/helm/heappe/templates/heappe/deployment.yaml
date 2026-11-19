@@ -156,8 +156,10 @@ spec:
             - name: SKIP_SETCAP
               value: "1"
           volumeMounts:
-            - name: vault-agent-config
+            - name: vault-agent-hcl
               mountPath: /opt/confs/vault/agent/vault-agent.hcl
+            - name: vault-agent-config
+              mountPath: /vault/config/
           resources:
             {{- toYaml .Values.api.vaultAgent.resources | nindent 12 }}
       volumes:
@@ -170,9 +172,12 @@ spec:
         - name: api-config
           configMap:
             name: {{ include "heappe.fullname" . }}-api-config
-        - name: vault-agent-config
+        - name: vault-agent-hcl
           configMap:
             name: {{ include "heappe.fullname" . }}-vault-agent
+        - name: vault-agent-config
+          secret:
+            secretName: {{ include "heappe.fullname" . }}-vault-config
         - name: seed-gen
           configMap:
             name: {{ include "heappe.fullname" . }}-seed-gen

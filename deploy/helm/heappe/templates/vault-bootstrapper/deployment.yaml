@@ -19,6 +19,9 @@ spec:
         - name: vault-bootstrapper
           image: {{ .Values.vault.vaultBootstrapper.image.repository }}:{{ .Values.vault.vaultBootstrapper.image.tag | default .Chart.AppVersion }}
           imagePullPolicy: Always
+          env:
+          - name: VAULT_CONFIG_SECRET_NAME
+            value: {{ include "heappe.fullname" . }}-vault-config
           command: [ "uv", "run", "--no-cache", "kopf", "run", "--namespace", {{ .Release.Namespace }}, "vault-bootstrapper.py"]
           resources:
             requests:

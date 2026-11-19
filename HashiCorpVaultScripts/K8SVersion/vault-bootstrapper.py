@@ -1,5 +1,6 @@
 from typing import Any
 from time import sleep
+import os
 
 import hvac
 import kubernetes
@@ -12,6 +13,7 @@ import urllib3.exceptions
 VAULT_BOOTSTRAPPER_ID = "vault-bootstrapper.it4i.cz"
 VAULT_BOOTSTRAPPER_ANNOTATION = {f"{VAULT_BOOTSTRAPPER_ID}/desired-state": "initialized"}
 
+VAULT_CONFIG_SECRET_NAME = os.environ["VAULT_CONFIG_SECRET_NAME"]
 
 class FailedToUnsealVault(kopf.TemporaryError):
     pass
@@ -196,7 +198,7 @@ def config(body: kopf.Body, name:str, namespace: str, logger: kopf.Logger, **_: 
     kub_api.create_namespaced_secret(
         namespace=namespace,
         body=kubernetes.client.V1Secret(
-            metadata=kubernetes.client.V1ObjectMeta(name="heappe-vault-agent"),
+            metadata=kubernetes.client.V1ObjectMeta(name=VAULT_CONFIG_SECRET_NAME),
             data={
                 "role_id": base64.b64encode(role_id.encode()).decode(),
                 "secret_id": base64.b64encode(secret_id.encode()).decode()
