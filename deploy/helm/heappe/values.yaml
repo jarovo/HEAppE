@@ -311,7 +311,7 @@ api:
           #"ClientId": "Rather pass this together with the client secret bellow so it is nicely grouped together",
           #"ClientSecret": "RATHER PASS THIS FROM ENV VARS THEN FROM CONFIGMAP!",
           "RequireHttps": true,
-          "ValidateIssuerName": false,
+          "ValidateIssuerName": true,
           "ValidateEndpoints": true,
           "TokenExchangeConfiguration": {
             "ClientId": "",
