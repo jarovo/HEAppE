@@ -1,0 +1,30 @@
+{{ if .Values.vault.vaultBootstrapper.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vault-bootstrapper
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault-bootstrapper
+  template:
+    metadata:
+      labels:
+        app: vault-bootstrapper
+    spec:
+      serviceAccountName: vault-bootstrapper  
+      containers:
+        - name: vault-bootstrapper
+          image: {{ .Values.vault.vaultBootstrapper.image.repository }}:{{ .Values.vault.vaultBootstrapper.image.tag | default .Chart.AppVersion }}
+          imagePullPolicy: Always
+          command: [ "uv", "run", "--no-cache", "kopf", "run", "--namespace", {{ .Release.Namespace }}, "vault-bootstrapper.py"]
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 250m
+            limits:
+              memory: 1Gi
+              cpu: 500m  
+{{ end}}
