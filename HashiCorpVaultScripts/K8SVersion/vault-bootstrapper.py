@@ -24,7 +24,7 @@ def configure(settings: kopf.OperatorSettings, **_: Any) -> None:
 
 
 @kopf.on.create('', 'v1', 'service', annotations=VAULT_BOOTSTRAPPER_ANNOTATION, labels={"vault-internal": "true"})
-@kopf.on.timer('', 'v1', 'service', annotations=VAULT_BOOTSTRAPPER_ANNOTATION, labels={"vault-internal": "true"}, interval=30.)
+@kopf.on.timer('', 'v1', 'service', annotations=VAULT_BOOTSTRAPPER_ANNOTATION, labels={"vault-internal": "true"}, interval=30., initial_delay=5.)
 def bootstrap_vault(spec: kopf.Spec, name: str, namespace: str | None, logger: kopf.Logger, **_: Any) -> None:
     ports = {p['name']: p['port'] for p in spec['ports']}
 
@@ -137,11 +137,9 @@ def config(body: kopf.Body, name:str, namespace: str, logger: kopf.Logger, **_: 
     )
 
     try:
-        seal_status = hvac_client.sys.read_seal_status()
-    except hvac.exceptions.VaultDown:
-        kopf.TemporaryError("Vault is down.", delay=5)
-
-    mounts = hvac_client.sys.list_mounted_secrets_engines()
+        mounts = hvac_client.sys.list_mounted_secrets_engines()
+    except hvac.exceptions.VaultDown as exc:
+        raise kopf.TemporaryError("Cannot read mounted secrets list.", delay=5) from exc
 
     if "kv-v2/" not in mounts:
         hvac_client.sys.enable_secrets_engine(
