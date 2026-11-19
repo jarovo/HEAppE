@@ -40,7 +40,7 @@ def bootstrap_vault(spec: kopf.Spec, name: str, namespace: str | None, logger: k
         raise kopf.TemporaryError("Vault doesn't seem to be ready yet.", delay=5)
 
 
-    logger.info(f"Seal status: {seal_status}")
+    logger.debug(f"Seal status: {seal_status}")
     if not seal_status['initialized']:
         logger.info("Vault is not initialized, initializing now")
         initialize_vault(name, namespace, hvac_client, kub_api, logger)
@@ -121,7 +121,6 @@ def unseal_vault(name: str, namespace: str, hvac_client: hvac.Client, kub_api: k
 def config(body: kopf.Body, name:str, namespace: str, logger: kopf.Logger, **_: Any):
     kub_api = kubernetes.client.CoreV1Api()
 
-    logger.info(f"Body {namespace}/{name}: {body}, {_}")
     data = body.get('data', {})
     metadata = body.get('metadata', {})
     encoded_token = data.get('rootToken')
