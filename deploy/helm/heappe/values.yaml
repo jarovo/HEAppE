@@ -559,15 +559,6 @@ vault:
       repository: "ghcr.io/jarovo/vault-bootstrapper"
       tag: "0.1.0-dev"
 
-  resources:
-    requests:
-      memory: '256Mi'
-      cpu: '250m'
-    limits:
-      memory: '256Mi'
-      cpu: '250m'
-
-
   global:
     openshift: true
 
@@ -582,6 +573,15 @@ vault:
       tag: "2.0.4-ubi"
 
   server:
+    resources:
+      requests:
+        memory: '256Mi'
+        cpu: '250m'
+      limits:
+        memory: '256Mi'
+        cpu: '250m'
+
+
     authDelegator:
       enabled: true
     serviceAccount:
