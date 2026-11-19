@@ -81,8 +81,21 @@ spec:
                 secretKeyRef:
                   name: {{ include "heappe.fullname" . }}-mssql
                   key: mssql-root-password
+
             - name: ConnectionStrings__MiddlewareContext
               value: {{ printf "Server=%s,1433;Database=HEAppEDb;User Id=sa;Password=$(DB_PASSWORD);TrustServerCertificate=True;Encrypt=Yes" (include "heappe.mssql.fullname" .) }}
+
+            - name: ExternalAuthenticationSettings__JwtTokenIntrospectionConfiguration__ClientId
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "heappe.fullname" . }}-oidc
+                  key: ClientId
+            - name: ExternalAuthenticationSettings__JwtTokenIntrospectionConfiguration__ClientSecret
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "heappe.fullname" . }}-oidc
+                  key: ClientSecret
+
             - name: ASPNETCORE_RUNTYPE_ENVIRONMENT
               value: Docker
             - name: ASPNETCORE_HTTP_PORTS
